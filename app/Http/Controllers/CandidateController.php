@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Skill;
+use App\Models\SkillSet;
 use App\Models\Job;
 use App\Models\Candidate;
 use Illuminate\Support\Facades\Validator;
@@ -29,11 +30,11 @@ class CandidateController extends Controller
                 'skill.*' => 'exists:skills,id',
             ]);
             if ($validator->fails()) {
-                return response()->json($validator->errors(), 422);
+                return response()->json(['message' => $validator->errors()->first()], 422);
             }
 
         $application = new Candidate();
-        $application->nama   = $request->fullname;
+        $application->name   = $request->fullname;
         $application->job_id = $request->jabatan;
         $application->phone  = $request->telepon;
         $application->email  = $request->email;
@@ -41,14 +42,15 @@ class CandidateController extends Controller
         $application->created_at = now();
         $application->save();
 
-        $candidateId = $candidate->id;
+        $candidateId = $application->id;
         $application->created_by = $candidateId;
         $application->save();
 
-        foreach($request->skill as $skill){
-            $skill = new SkillSet;
-            $skill->candidate_id = $candidateId;
-            $skill->skill_id     =  $skill;
+        foreach($request->skill as $skillId){
+            $skillSet = new SkillSet;
+            $skillSet->candidate_id = $candidateId;
+            $skillSet->skill_id = $skillId;
+            $skillSet->save();
         }
         return response()->json([
             'success' => true,

@@ -31,11 +31,11 @@
         @csrf
         <div class="form-group">
         <label for="name"> Nama Lengkap</label>
-          <input type="text" name="fullname" class="form-control" placeholder="Cth: Jonathan Akbar">
+          <input type="text" name="fullname" class="form-control" placeholder="Cth: Jonathan Akbar" required>
         </div>
         <div class="form-group">
         <label for="jabatan"> Jabatan</label>
-        <select name="jabatan" class="form-control select2" style="width: 100%;">
+        <select name="jabatan" class="form-control select2" style="width: 100%;" required>
         @foreach($data['jobs'] as $job)
             <option value="{{ $job->id }}">{{ $job->name }}</option>
         @endforeach
@@ -43,11 +43,11 @@
         </div>
         <div class="form-group">
         <label for="telepon"> Telepon</label>
-          <input type="text" name="telepon" class="form-control" placeholder="Cth:089123456788">
+          <input type="text" name="telepon" class="form-control" placeholder="Cth:089123456788" required>
         </div>
         <div class="form-group">
         <label for="name"> Email</label>
-          <input type="text" name="fullname" class="form-control" placeholder="Cth: jonathanaktbar@gmail.com">
+          <input type="text" name="email" class="form-control" placeholder="Cth: jonathanaktbar@gmail.com" required>
         </div>
         <div class="form-group">
         <label for="tahun_lahir"> Tahun Lahir </label>
@@ -70,7 +70,7 @@
         </div>
           <!-- /.col -->
           <div>
-            <button id="applyButton" type="submit" class="btn btn-primary btn-block">Apply</button>
+            <button id="applyButton" type="submit" class="btn btn-block btn-danger">Apply</button>
           </div>
           <!-- /.col -->
         </div>
@@ -88,6 +88,7 @@
 <script src="{{ asset ('lte/dist/js/adminlte.min.js')}}"></script>
 
 <script src="{{ asset ('lte/plugins/select2/js/select2.full.min.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 <script>
   $(function () {
@@ -105,12 +106,21 @@
             success: function(response) {
                 console.log(response);
                 $('#applyForm')[0].reset();
-                alert('Lamaran berhasil dikirim!');
+                Swal.fire({
+                    type: 'success',
+                    icon: 'success',
+                    title: `Data berhasil disimpan`,
+                });
             },
             error: function(xhr) {
-                console.log(xhr.responseText);
-                var errorMessage = xhr.responseJSON.message;
-                alert('Terjadi kesalahan saat mengirim lamaran: ' + errorMessage);
+              var response = JSON.parse(xhr.responseText);
+              var errorMessage = response.message;
+              Swal.fire({
+                    type: 'error',
+                    icon: 'error',
+                    title: 'Data tidak tersimpan',
+                    title: 'Terjadi kesalahan saat mengirim lamaran: ' + errorMessage,
+              });
             }
             });
         });

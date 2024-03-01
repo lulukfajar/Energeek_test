@@ -9,6 +9,7 @@ class SkillSet extends Model
 {
     use HasFactory;
     protected $table = 'skill_sets';
+    public $timestamps = false;
     protected $primaryKey = null;
     protected $fillable = [
         'candidate_id',
