@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Energeek | Buat Lamaran</title>
 
   <!-- Google Font: Source Sans Pro -->
@@ -26,7 +27,8 @@
   <div class="card card-primary">
     <div class="card-body">
       <p class="login-box-msg">Apply Lamaran</p>
-        <form action="../../index.html" method="post">
+        <form action="{{ route('apply_form') }}" id="applyForm" method="post">
+        @csrf
         <div class="form-group">
         <label for="name"> Nama Lengkap</label>
           <input type="text" name="fullname" class="form-control" placeholder="Cth: Jonathan Akbar">
@@ -60,7 +62,7 @@
         </div>
         <div class="form-group">
         <label for="skill"> Jabatan</label>
-        <select name="skill" class="select2" multiple="multiple" data-placeholder="Pilih Skill" style="width: 100%;">
+        <select name="skill[]" class="select2" multiple="multiple" data-placeholder="Pilih Skill" style="width: 100%;">
         @foreach($data['skills'] as $skill)
             <option value="{{ $skill->id }}">{{ $skill->name }}</option>
         @endforeach
@@ -68,7 +70,7 @@
         </div>
           <!-- /.col -->
           <div>
-            <button type="submit" class="btn btn-primary btn-block">Apply</button>
+            <button id="applyButton" type="submit" class="btn btn-primary btn-block">Apply</button>
           </div>
           <!-- /.col -->
         </div>
@@ -92,5 +94,26 @@
     $('.select2').select2()
   }
   );
+  $(document).ready(function() {
+        $('#applyButton').click(function() {
+            event.preventDefault();
+            var formData = $('#applyForm').serialize();
+            $.ajax({
+            url: "{{ route('apply_form') }}",
+            type: "POST",
+            data: formData,
+            success: function(response) {
+                console.log(response);
+                $('#applyForm')[0].reset();
+                alert('Lamaran berhasil dikirim!');
+            },
+            error: function(xhr) {
+                console.log(xhr.responseText);
+                var errorMessage = xhr.responseJSON.message;
+                alert('Terjadi kesalahan saat mengirim lamaran: ' + errorMessage);
+            }
+            });
+        });
+    });
 </script>
 </html>

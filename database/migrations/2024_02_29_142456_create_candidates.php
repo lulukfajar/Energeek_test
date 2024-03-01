@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('email', 255);
             $table->string('phone', 15);
             $table->integer('year');
-            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('deleted_by')->nullable();
             $table->timestamp('created_at');
